@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Define the base URL for API requests
-const API_BASE_URL = 'http://localhost:5001/api'; // Adjust this to your actual API base URL
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001/api';
 
 // Define the shape of our user data
 export interface User {
@@ -39,12 +39,20 @@ export interface AuthResponse {
 export async function login(credentials: LoginCredentials): Promise<AuthResponse> {
   try {
     const response = await axios.post<AuthResponse>(
-      `${API_BASE_URL}/login`,
+      `${API_BASE_URL}/Login`,
       credentials
     );
+    
+    // Store the token in localStorage
+    if (response.data.token) {
+      localStorage.setItem('authToken', response.data.token);
+    }
+    
     return response.data;
-  } catch (error: unknown) {
-    throw new Error('Login failed. Please check your credentials and try again.');
+  } catch (error: any) {
+    console.error('Login error:', error);
+    const message = error.response?.data?.message || 'Login failed. Please check your credentials and try again.';
+    throw new Error(message);
   }
 }
 
@@ -56,12 +64,20 @@ export async function login(credentials: LoginCredentials): Promise<AuthResponse
 export async function signup(userData: SignupData): Promise<AuthResponse> {
   try {
     const response = await axios.post<AuthResponse>(
-      `${API_BASE_URL}/signup`,
+      `${API_BASE_URL}/Signup`,
       userData
     );
+    
+    // Store the token in localStorage
+    if (response.data.token) {
+      localStorage.setItem('authToken', response.data.token);
+    }
+    
     return response.data;
-  } catch (error: unknown) {
-    throw new Error('Signup failed. Please check your information and try again.');
+  } catch (error: any) {
+    console.error('Signup error:', error);
+    const message = error.response?.data?.message || 'Signup failed. Please check your information and try again.';
+    throw new Error(message);
   }
 }
 
@@ -71,9 +87,14 @@ export async function signup(userData: SignupData): Promise<AuthResponse> {
  */
 export async function logout(): Promise<void> {
   try {
-    await axios.post(`${API_BASE_URL}/auth/logout`);
+    // Remove token from localStorage
+    localStorage.removeItem('authToken');
+    
+    // Optional: Call logout endpoint if your API has one
+    // await axios.post(`${API_BASE_URL}/auth/logout`);
   } catch (error: unknown) {
     // Even if the server request fails, we can still clear local state
     console.warn('Logout request failed, but clearing local state anyway', error);
+    localStorage.removeItem('authToken');
   }
 }

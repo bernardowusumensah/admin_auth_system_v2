@@ -1,16 +1,18 @@
 import { Drawer, List, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography, Divider, Button } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@modules/hooks';
 import toast from 'react-hot-toast';
 import { sidebarStyles } from './sidebar.styles';
 // Icons
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PeopleIcon from '@mui/icons-material/People';
+import HealthAndSafetyIcon from '@mui/icons-material/HealthAndSafety';
 import LogoutIcon from '@mui/icons-material/Logout';
 
 export default function SidebarComponent() {
   const { logout, user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = async () => {
     try {
@@ -22,6 +24,8 @@ export default function SidebarComponent() {
       console.error('Logout failed:', error);
     }
   };
+
+  const isActive = (path: string) => location.pathname === path;
 
   return (
     <Drawer
@@ -36,17 +40,34 @@ export default function SidebarComponent() {
       </Toolbar>
       <Divider />
       <List>
-        <ListItemButton>
+        <ListItemButton 
+          onClick={() => navigate('/dashboard')}
+          selected={isActive('/dashboard')}
+        >
           <ListItemIcon>
             <DashboardIcon />
           </ListItemIcon>
           <ListItemText primary="Dashboard" />
         </ListItemButton>
-        <ListItemButton>
+        
+        <ListItemButton 
+          onClick={() => navigate('/accounts')}
+          selected={isActive('/accounts')}
+        >
           <ListItemIcon>
             <PeopleIcon />
           </ListItemIcon>
-          <ListItemText primary="Users" />
+          <ListItemText primary="Accounts" />
+        </ListItemButton>
+        
+        <ListItemButton 
+          onClick={() => navigate('/service-health')}
+          selected={isActive('/service-health')}
+        >
+          <ListItemIcon>
+            <HealthAndSafetyIcon />
+          </ListItemIcon>
+          <ListItemText primary="Service Health" />
         </ListItemButton>
       </List>
       <Divider />

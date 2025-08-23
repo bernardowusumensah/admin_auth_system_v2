@@ -6,6 +6,8 @@ import { store } from '@app/store';
 import LoginScreen from '@core/auth/screens/Login';
 import SignupScreen from '@core/auth/screens/Signup';
 import DashboardScreen from '@modules/dashboard/screens/Dashboard';
+import AccountsScreen from '@modules/accounts/screens/Accounts';
+import ServiceHealthScreen from '@modules/service-health/screens/ServiceHealth';
 // Layout
 import AppLayout from '@app/AppLayout';
 
@@ -17,6 +19,8 @@ const router = createBrowserRouter([
 			{ path: 'login', element: <LoginScreen /> },
 			{ path: 'signup', element: <SignupScreen /> },
 			{ path: 'dashboard', element: <DashboardScreen /> },
+			{ path: 'accounts', element: <AccountsScreen /> },
+			{ path: 'service-health', element: <ServiceHealthScreen /> },
 		],
 	},
 ]);
