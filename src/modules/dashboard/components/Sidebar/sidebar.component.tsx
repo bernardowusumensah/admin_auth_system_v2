@@ -8,6 +8,7 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import PeopleIcon from '@mui/icons-material/People';
 import HealthAndSafetyIcon from '@mui/icons-material/HealthAndSafety';
 import LogoutIcon from '@mui/icons-material/Logout';
+import SupportAgentIcon from '@mui/icons-material/SupportAgent';
 
 export default function SidebarComponent() {
   const { logout, user } = useAuth();
@@ -74,8 +75,7 @@ export default function SidebarComponent() {
             selected={isActive('/support-tickets')}
           >
             <ListItemIcon>
-              {/* You can use a suitable icon here, e.g., SupportAgentIcon */}
-              <HealthAndSafetyIcon />
+              <SupportAgentIcon />
             </ListItemIcon>
             <ListItemText primary="Support Tickets" />
           </ListItemButton>

@@ -1,9 +1,10 @@
 import axios from 'axios';
 import type { AxiosInstance, AxiosResponse } from 'axios';
+import { store } from '@app/store';
+import { clearAuth } from '@app/authSlice';
 
 // Base API configuration for .NET backend
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://localhost:7001/api';
-const AUTH_TOKEN_KEY = import.meta.env.VITE_AUTH_TOKEN_KEY || 'authToken';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://localhost:5001/api';
 
 // Create axios instance with .NET API specific configurations
 const createApiInstance = (baseURL: string = API_BASE_URL): AxiosInstance => {
@@ -19,7 +20,10 @@ const createApiInstance = (baseURL: string = API_BASE_URL): AxiosInstance => {
   // Request interceptor to add auth token
   instance.interceptors.request.use(
     (config) => {
-      const token = localStorage.getItem(AUTH_TOKEN_KEY);
+      // Get token from Redux store instead of localStorage directly
+      const state = store.getState();
+      const token = state.auth.token;
+      
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -37,9 +41,8 @@ const createApiInstance = (baseURL: string = API_BASE_URL): AxiosInstance => {
     },
     (error) => {
       if (error.response?.status === 401) {
-        // Handle unauthorized - redirect to login
-        localStorage.removeItem(AUTH_TOKEN_KEY);
-        window.location.href = '/login';
+        // Handle unauthorized - clear auth state and Redux will handle redirect
+        store.dispatch(clearAuth());
       }
       return Promise.reject(error);
     }
@@ -57,10 +60,10 @@ export const ApiUtils = {
   handleResponse: <T>(response: AxiosResponse<T>) => response.data,
   
   // Handle .NET API errors
-  handleError: (error: any) => {
+  handleError: (error: unknown) => {
     console.error('API Error:', error);
     
-    if (error.response) {
+    if (axios.isAxiosError(error) && error.response) {
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx
       const message = error.response.data?.message || 
@@ -68,17 +71,17 @@ export const ApiUtils = {
                      error.response.statusText || 
                      'An error occurred';
       throw new Error(message);
-    } else if (error.request) {
+    } else if (axios.isAxiosError(error) && error.request) {
       // The request was made but no response was received
       throw new Error('No response from server. Please check your connection.');
     } else {
       // Something happened in setting up the request that triggered an Error
-      throw new Error(error.message || 'An unexpected error occurred');
+      throw new Error(error instanceof Error ? error.message : 'An unexpected error occurred');
     }
   },
 
   // Build query parameters for .NET API
-  buildQueryParams: (params: Record<string, any>): string => {
+  buildQueryParams: (params: Record<string, unknown>): string => {
     const searchParams = new URLSearchParams();
     
     Object.entries(params).forEach(([key, value]) => {

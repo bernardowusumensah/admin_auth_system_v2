@@ -31,7 +31,7 @@ import {
 } from '@mui/icons-material';
 import type { RootState, AppDispatch } from '@app/store';
 import type { AccountDto, AccountFilters } from '@core/types';
-import { SubscriptionStatus, RequiredActionType } from '@core/types';
+import { SubscriptionStatus } from '@core/types';
 import { 
   fetchAccounts, 
   setSearchParams, 
@@ -80,6 +80,10 @@ export default function AccountsTable({ onViewAccount }: AccountsTableProps) {
   useEffect(() => {
     dispatch(fetchAccounts(searchParams));
   }, [dispatch, searchParams]);
+
+    useEffect(() => {
+    console.log(accounts);
+  }, [accounts]);
 
   // Handle search
   const handleSearch = useCallback(() => {
@@ -173,10 +177,10 @@ export default function AccountsTable({ onViewAccount }: AccountsTableProps) {
     );
   }
 
+
+
   return (
-    <AccountsContainer>
-      <h2>Account Management</h2>
-      
+    <AccountsContainer>      
       {error && (
         <Alert severity="error" sx={{ mb: 2 }}>
           {error}
@@ -323,8 +327,8 @@ export default function AccountsTable({ onViewAccount }: AccountsTableProps) {
 
                     <TableCell>
                       {activeSubscription ? (
-                        <SubscriptionBadge type={activeSubscription.subscriptionType.toLowerCase() as 'basic' | 'premium'}>
-                          {activeSubscription.subscriptionType}
+                        <SubscriptionBadge type={activeSubscription.subscriptionType ==  0 ? 'basic' : 'premium'}>
+                          {activeSubscription.subscriptionType ==  0 ? 'basic' : 'premium'}
                         </SubscriptionBadge>
                       ) : (
                         <span style={{ color: '#999' }}>None</span>

@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Box, Paper, Typography } from '@mui/material';
+import { Paper, Typography } from '@mui/material';
 // Styles
 import { FormContainer, FormWrapper } from './auth-form.styles';
 
@@ -22,7 +22,15 @@ export default function AuthFormComponent({
 }: AuthFormProps) {
   return (
     <FormWrapper>
-      <Paper elevation={3} sx={{ p: 4, width: '100%', maxWidth: 400 }}>
+      <Paper 
+        elevation={3} 
+        sx={{ 
+          p: 4, 
+          maxWidth: 400, 
+          width: '100%',
+          margin: 'auto'
+        }}
+      >
         {title && (
           <Typography variant="h4" component="h1" gutterBottom align="center">
             {title}
@@ -39,9 +47,7 @@ export default function AuthFormComponent({
           </Typography>
         )}
         <FormContainer 
-          component="form" 
           onSubmit={onSubmit}
-          disabled={loading}
         >
           {children}
         </FormContainer>

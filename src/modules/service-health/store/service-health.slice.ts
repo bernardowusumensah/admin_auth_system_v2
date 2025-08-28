@@ -8,7 +8,7 @@ export const fetchServicesHealth = createAsyncThunk(
   'serviceHealth/fetchServicesHealth',
   async () => {
     // Use mock function for now - replace with real API when ready
-    return await ServiceHealthService.getMockServicesHealth();
+    return await ServiceHealthService.getServicesHealth();
   }
 );
 

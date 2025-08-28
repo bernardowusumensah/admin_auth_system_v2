@@ -1,10 +1,14 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { ThemeProvider } from '@mui/material/styles';
 import { CssBaseline } from '@mui/material';
 import { Toaster } from 'react-hot-toast';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { store } from '@app/store';
 import { theme } from '@app/theme';
+import { initializeAuth } from '@app/authSlice';
+import type { AppDispatch } from '@app/store';
 // Screens
 import LoginScreen from '@core/auth/screens/Login';
 import SignupScreen from '@core/auth/screens/Signup';
@@ -15,11 +19,24 @@ import SupportTicketsScreen from '@modules/support/screens/SupportTickets/suppor
 // Layout
 import AppLayout from '@app/AppLayout';
 
+// Auth initializer component
+function AuthInitializer({ children }: { children: React.ReactNode }) {
+  const dispatch: AppDispatch = useDispatch();
+
+  useEffect(() => {
+    // Initialize auth state from localStorage on app start
+    dispatch(initializeAuth());
+  }, [dispatch]);
+
+  return <>{children}</>;
+}
+
 const router = createBrowserRouter([
 	{
 		path: '/',
 		element: <AppLayout />,
 		children: [
+			{ index: true, element: <Navigate to="/login" replace /> },
 			{ path: 'login', element: <LoginScreen /> },
 			{ path: 'signup', element: <SignupScreen /> },
 			{ path: 'dashboard', element: <DashboardScreen /> },
@@ -35,7 +52,9 @@ function App() {
 		<Provider store={store}>
 			<ThemeProvider theme={theme}>
 				<CssBaseline />
-				<RouterProvider router={router} />
+				<AuthInitializer>
+					<RouterProvider router={router} />
+				</AuthInitializer>
 				<Toaster
 					position="top-right"
 					toastOptions={{

@@ -6,11 +6,12 @@ export const FormWrapper = styled(Box)(({ theme }) => ({
   justifyContent: 'center',
   alignItems: 'center',
   minHeight: '100vh',
+  width: '100%',
   padding: theme.spacing(2),
   backgroundColor: theme.palette.background.default,
 }));
 
-export const FormContainer = styled(Box)(({ theme }) => ({
+export const FormContainer = styled('form')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   gap: theme.spacing(2),

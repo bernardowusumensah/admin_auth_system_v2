@@ -1,5 +1,6 @@
 import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import {
   Button,
   Switch,
@@ -14,7 +15,8 @@ import {
   CheckCircle as HealthyIcon,
   Error as ErrorIcon,
   Warning as WarningIcon,
-  Settings as SettingsIcon
+  Settings as SettingsIcon,
+  ArrowBack as ArrowBackIcon
 } from '@mui/icons-material';
 import type { RootState, AppDispatch } from '@app/store';
 import { ServiceStatus } from '@core/types';
@@ -55,6 +57,7 @@ import {
 
 export default function ServiceHealthDashboard() {
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
   const {
     services,
     lastUpdated,
@@ -79,6 +82,11 @@ export default function ServiceHealthDashboard() {
 
     return () => clearInterval(interval);
   }, [dispatch, autoRefresh, refreshInterval]);
+
+  // Handle back navigation
+  const handleBackClick = useCallback(() => {
+    navigate(-1);
+  }, [navigate]);
 
   // Handle manual refresh
   const handleRefresh = useCallback(() => {
@@ -168,9 +176,25 @@ export default function ServiceHealthDashboard() {
     <DashboardContainer>
       {/* Header */}
       <HeaderSection>
-        <HeaderTitle>Services Health Monitor</HeaderTitle>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <Tooltip title="Go Back">
+            <IconButton 
+              onClick={handleBackClick}
+              sx={{ 
+                bgcolor: 'primary.main', 
+                color: 'white',
+                '&:hover': {
+                  bgcolor: 'primary.dark'
+                }
+              }}
+            >
+              <ArrowBackIcon />
+            </IconButton>
+          </Tooltip>
+          <HeaderTitle>Services Health Monitor</HeaderTitle>
+        </div>
         <HeaderActions>
-          <LastUpdated>{formatLastUpdated(lastUpdated)}</LastUpdated>
+          <LastUpdated>{formatLastUpdated(lastUpdated ?? '')}</LastUpdated>
           
           {autoRefresh && (
             <AutoRefreshBadge enabled={autoRefresh}>
@@ -223,12 +247,12 @@ export default function ServiceHealthDashboard() {
         <OverallStatusCard status={overallStatus}>
           <OverallStatusContent>
             <OverallStatusHeader>
-              <StatusIcon status={overallStatus}>
+              <StatusIcon status={overallStatus === 'healthy' ? 'healthy' : 'unavailable'}>
                 {overallStatus === 'healthy' ? <HealthyIcon /> : <ErrorIcon />}
               </StatusIcon>
               <div>
                 <OverallStatusTitle>System Status</OverallStatusTitle>
-                <OverallStatusText status={overallStatus}>
+                <OverallStatusText status={overallStatus ?? 'unavailable'}>
                   {getOverallStatusText()}
                 </OverallStatusText>
               </div>

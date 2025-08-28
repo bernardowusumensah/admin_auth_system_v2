@@ -6,15 +6,11 @@ export class ServiceHealthService {
   // Get health status of all monitored services
   static async getServicesHealth(): Promise<ServiceHealthResponse> {
     try {
-      // Use mock data for development/testing
-      if (import.meta.env.VITE_ENV === 'development') {
-        console.log('🔄 Using mock data for service health');
-        return await this.getMockServicesHealth();
-      }
 
       const response = await apiClient.get('/admin/health/services');
       return ApiUtils.handleResponse(response);
-    } catch (error) {
+    } catch (error: unknown) {
+      console.log(error);
       console.warn('Failed to fetch real service health, falling back to mock data');
       return await this.getMockServicesHealth();
     }

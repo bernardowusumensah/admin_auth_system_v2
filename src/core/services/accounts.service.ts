@@ -22,15 +22,8 @@ export class AccountsService {
         sortOrder = 'desc'
       } = params;
 
-      // Use mock data for development/testing
-      if (import.meta.env.VITE_ENV === 'development') {
-        console.log('🔄 Using mock data for accounts');
-        await new Promise(resolve => setTimeout(resolve, 500));
-        return MockDataGenerator.getMockAccountsResponse(page, pageSize);
-      }
-
       // Build query parameters for .NET API
-      const queryParams: Record<string, any> = {
+      const queryParams: Record<string, unknown> = {
         page,
         pageSize,
         sortBy,
@@ -52,7 +45,7 @@ export class AccountsService {
       const queryString = ApiUtils.buildQueryParams(queryParams);
       const response = await apiClient.get(`/admin/accounts?${queryString}`);
       
-      return ApiUtils.handleResponse(response);
+      return response.data;
     } catch (error) {
       ApiUtils.handleError(error);
       throw error;
@@ -62,15 +55,12 @@ export class AccountsService {
   // Get detailed account information
   static async getAccountDetails(accountId: string): Promise<AccountDetailsResponse> {
     try {
-      // Use mock data for development
-      if (import.meta.env.VITE_ENV === 'development') {
-        console.log('🔄 Using mock data for account details');
-        await new Promise(resolve => setTimeout(resolve, 300));
-        return MockDataGenerator.getMockAccountDetails(accountId);
-      }
-
       const response = await apiClient.get(`/admin/accounts/${accountId}`);
-      return ApiUtils.handleResponse(response);
+
+      return {
+        account: response.data,
+        user: response.data?.user
+      };
     } catch (error) {
       ApiUtils.handleError(error);
       throw error;

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { TextField, Button, Alert, Box, Typography, Link } from '@mui/material';
+import { TextField, Button, Box, Typography, Link } from '@mui/material';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { useAuth } from '@modules/hooks';
 import AuthFormComponent from '@core/auth/components/AuthForm/auth-form.component';
@@ -30,7 +30,7 @@ export default function LoginScreen() {
       title="Welcome Back"
       subtitle="Sign in to your admin account"
       loading={loading}
-      error={error}
+      error={error??''}
     >
       <TextField 
         label="Email" 

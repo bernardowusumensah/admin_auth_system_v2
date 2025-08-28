@@ -1,7 +1,5 @@
-import axios from 'axios';
-
-// Define the base URL for API requests
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001/api';
+import { AxiosError } from 'axios';
+import { apiClient } from '@core/config/api.config';
 
 // Define the shape of our user data
 export interface User {
@@ -31,6 +29,18 @@ export interface AuthResponse {
   token: string;
 }
 
+export interface AuthWithAccountResponse {
+  user: LoginAccount;
+  token: string;
+  message: string;
+}
+
+export interface LoginAccount {
+  id: string;
+  email: string;
+  user?: User;
+}
+
 /**
  * Authenticates a user with email and password
  * @param credentials The user's login credentials
@@ -38,20 +48,26 @@ export interface AuthResponse {
  */
 export async function login(credentials: LoginCredentials): Promise<AuthResponse> {
   try {
-    const response = await axios.post<AuthResponse>(
-      `${API_BASE_URL}/Login`,
+    const response = await apiClient.post<AuthWithAccountResponse>(
+      '/Login',
       credentials
     );
-    
-    // Store the token in localStorage
-    if (response.data.token) {
-      localStorage.setItem('authToken', response.data.token);
+
+    const data = {
+      user: {
+        id: response.data.user.id,
+        email: response.data.user.email,
+        firstName: response.data.user.user ? response.data.user.user.firstName : '',
+        lastName: response.data.user.user ? response.data.user.user.lastName : '',
+      } as User,
+      token: response.data.token
     }
-    
-    return response.data;
-  } catch (error: any) {
+
+    return data;
+  } catch (error: unknown) {
     console.error('Login error:', error);
-    const message = error.response?.data?.message || 'Login failed. Please check your credentials and try again.';
+    const axiosError = error as AxiosError<{ message: string }>;
+    const message = axiosError?.response?.data?.message || 'Login failed. Please check your credentials and try again.';
     throw new Error(message);
   }
 }
@@ -63,20 +79,16 @@ export async function login(credentials: LoginCredentials): Promise<AuthResponse
  */
 export async function signup(userData: SignupData): Promise<AuthResponse> {
   try {
-    const response = await axios.post<AuthResponse>(
-      `${API_BASE_URL}/Signup`,
+    const response = await apiClient.post<AuthResponse>(
+      '/Signup',
       userData
     );
     
-    // Store the token in localStorage
-    if (response.data.token) {
-      localStorage.setItem('authToken', response.data.token);
-    }
-    
     return response.data;
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Signup error:', error);
-    const message = error.response?.data?.message || 'Signup failed. Please check your information and try again.';
+    const axiosError = error as AxiosError<{ message: string }>;
+    const message = axiosError?.response?.data?.message || 'Signup failed. Please check your information and try again.';
     throw new Error(message);
   }
 }
@@ -87,14 +99,10 @@ export async function signup(userData: SignupData): Promise<AuthResponse> {
  */
 export async function logout(): Promise<void> {
   try {
-    // Remove token from localStorage
-    localStorage.removeItem('authToken');
-    
     // Optional: Call logout endpoint if your API has one
     // await axios.post(`${API_BASE_URL}/auth/logout`);
+    console.log('Logout completed');
   } catch (error: unknown) {
-    // Even if the server request fails, we can still clear local state
-    console.warn('Logout request failed, but clearing local state anyway', error);
-    localStorage.removeItem('authToken');
+    console.warn('Logout request failed', error);
   }
 }
