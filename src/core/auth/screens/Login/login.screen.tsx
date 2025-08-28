@@ -2,10 +2,8 @@ import { useState } from 'react';
 import { TextField, Button, Alert, Box, Typography, Link } from '@mui/material';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { useAuth } from '@modules/hooks';
-import AuthHeaderComponent from '@core/auth/components/AuthHeader/auth-header.component';
+import AuthFormComponent from '@core/auth/components/AuthForm/auth-form.component';
 import toast from 'react-hot-toast';
-// Styles
-import { LoginContainer, LoginForm } from './login.styles';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -27,44 +25,50 @@ export default function LoginScreen() {
   };
 
   return (
-    <div>
-      <AuthHeaderComponent title="Admin Dashboard" />
-      <LoginContainer>
-        <LoginForm>
-          <Box component="form" onSubmit={handleSubmit}>
-            {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
-            <TextField 
-              label="Email" 
-              type="email"
-              value={email} 
-              onChange={(e) => setEmail(e.target.value)} 
-              fullWidth
-              margin="normal"
-              required
-            />
-            <TextField 
-              label="Password" 
-              type="password" 
-              value={password} 
-              onChange={(e) => setPassword(e.target.value)} 
-              fullWidth
-              margin="normal"
-              required
-            />
-            <Button type="submit" variant="contained" fullWidth disabled={loading}>
-              {loading ? 'Logging in...' : 'Login'}
-            </Button>
-            <Box sx={{ mt: 2, textAlign: 'center' }}>
-              <Typography variant="body2">
-                Don't have an account?{' '}
-                <Link component={RouterLink} to="/signup" underline="hover">
-                  Sign up here
-                </Link>
-              </Typography>
-            </Box>
-          </Box>
-        </LoginForm>
-      </LoginContainer>
-    </div>
+    <AuthFormComponent
+      onSubmit={handleSubmit}
+      title="Welcome Back"
+      subtitle="Sign in to your admin account"
+      loading={loading}
+      error={error}
+    >
+      <TextField 
+        label="Email" 
+        type="email"
+        value={email} 
+        onChange={(e) => setEmail(e.target.value)} 
+        fullWidth
+        required
+        variant="outlined"
+        size="medium"
+      />
+      <TextField 
+        label="Password" 
+        type="password" 
+        value={password} 
+        onChange={(e) => setPassword(e.target.value)} 
+        fullWidth
+        required
+        variant="outlined"
+        size="medium"
+      />
+      <Button 
+        type="submit" 
+        variant="contained" 
+        fullWidth 
+        disabled={loading}
+        size="large"
+      >
+        {loading ? 'Signing in...' : 'Sign In'}
+      </Button>
+      <Box sx={{ mt: 2, textAlign: 'center' }}>
+        <Typography variant="body2" color="textSecondary">
+          Don't have an account?{' '}
+          <Link component={RouterLink} to="/signup" underline="hover" color="primary">
+            Sign up here
+          </Link>
+        </Typography>
+      </Box>
+    </AuthFormComponent>
   );
 }

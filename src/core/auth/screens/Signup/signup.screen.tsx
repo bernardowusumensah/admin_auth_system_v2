@@ -1,11 +1,9 @@
 import { useState } from 'react';
-import { TextField, Button, Alert, Box, Typography, Link } from '@mui/material';
+import { TextField, Button, Box, Typography, Link, Grid } from '@mui/material';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { useAuth } from '@modules/hooks';
-import AuthHeaderComponent from '@core/auth/components/AuthHeader/auth-header.component';
+import AuthFormComponent from '@core/auth/components/AuthForm/auth-form.component';
 import toast from 'react-hot-toast';
-// Styles
-import { SignupContainer, SignupForm } from './signup.styles';
 
 export default function SignupScreen() {
   const [formData, setFormData] = useState({
@@ -44,64 +42,78 @@ export default function SignupScreen() {
   };
 
   return (
-    <div>
-      <AuthHeaderComponent title="Admin Dashboard" />
-      <SignupContainer>
-        <SignupForm>
-          <Box component="form" onSubmit={handleSubmit}>
-            {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
-            <TextField 
-              label="First Name"
-              name="firstName"
-              value={formData.firstName}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-              required
-            />
-            <TextField 
-              label="Last Name"
-              name="lastName"
-              value={formData.lastName}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-              required
-            />
-            <TextField 
-              label="Email"
-              name="email"
-              type="email"
-              value={formData.email}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-              required
-            />
-            <TextField 
-              label="Password"
-              name="password"
-              type="password"
-              value={formData.password}
-              onChange={handleChange}
-              fullWidth
-              margin="normal"
-              required
-            />
-            <Button type="submit" variant="contained" fullWidth disabled={loading}>
-              {loading ? 'Signing up...' : 'Sign Up'}
-            </Button>
-            <Box sx={{ mt: 2, textAlign: 'center' }}>
-              <Typography variant="body2">
-                Already have an account?{' '}
-                <Link component={RouterLink} to="/login" underline="hover">
-                  Login here
-                </Link>
-              </Typography>
-            </Box>
-          </Box>
-        </SignupForm>
-      </SignupContainer>
-    </div>
+    <AuthFormComponent
+      onSubmit={handleSubmit}
+      title="Create Account"
+      subtitle="Join the admin dashboard"
+      loading={loading}
+      error={error}
+    >
+      <Grid container spacing={2}>
+        <Grid item xs={12} sm={6}>
+          <TextField 
+            label="First Name"
+            name="firstName"
+            value={formData.firstName}
+            onChange={handleChange}
+            fullWidth
+            required
+            variant="outlined"
+            size="medium"
+          />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <TextField 
+            label="Last Name"
+            name="lastName"
+            value={formData.lastName}
+            onChange={handleChange}
+            fullWidth
+            required
+            variant="outlined"
+            size="medium"
+          />
+        </Grid>
+      </Grid>
+      <TextField 
+        label="Email"
+        name="email"
+        type="email"
+        value={formData.email}
+        onChange={handleChange}
+        fullWidth
+        required
+        variant="outlined"
+        size="medium"
+      />
+      <TextField 
+        label="Password"
+        name="password"
+        type="password"
+        value={formData.password}
+        onChange={handleChange}
+        fullWidth
+        required
+        variant="outlined"
+        size="medium"
+      />
+      <Button 
+        type="submit" 
+        variant="contained" 
+        fullWidth 
+        disabled={loading}
+        size="large"
+      >
+        {loading ? 'Creating Account...' : 'Create Account'}
+      </Button>
+      <Box sx={{ mt: 2, textAlign: 'center' }}>
+        <Typography variant="body2" color="textSecondary">
+          Already have an account?{' '}
+          <Link component={RouterLink} to="/login" underline="hover" color="primary">
+            Sign in here
+          </Link>
+        </Typography>
+      </Box>
+    </AuthFormComponent>
   );
 }

@@ -1,10 +1,27 @@
 import { styled } from '@mui/material/styles';
-import { Paper } from '@mui/material';
+import { Box } from '@mui/material';
 
-export const FormContainer = styled(Paper)({
-  padding: '2rem',
+export const FormWrapper = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  minHeight: '100vh',
+  padding: theme.spacing(2),
+  backgroundColor: theme.palette.background.default,
+}));
+
+export const FormContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
-  gap: '1rem',
+  gap: theme.spacing(2),
   width: '100%',
-});
+  '& .MuiTextField-root': {
+    marginBottom: theme.spacing(2),
+  },
+  '& .MuiButton-root': {
+    marginTop: theme.spacing(1),
+    height: 48,
+    fontSize: '1rem',
+    fontWeight: 600,
+  },
+}));

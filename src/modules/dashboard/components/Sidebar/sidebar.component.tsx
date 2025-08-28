@@ -69,6 +69,16 @@ export default function SidebarComponent() {
           </ListItemIcon>
           <ListItemText primary="Service Health" />
         </ListItemButton>
+          <ListItemButton 
+            onClick={() => navigate('/support-tickets')}
+            selected={isActive('/support-tickets')}
+          >
+            <ListItemIcon>
+              {/* You can use a suitable icon here, e.g., SupportAgentIcon */}
+              <HealthAndSafetyIcon />
+            </ListItemIcon>
+            <ListItemText primary="Support Tickets" />
+          </ListItemButton>
       </List>
       <Divider />
       {user && (
